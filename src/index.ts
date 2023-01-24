@@ -1,11 +1,22 @@
-import * as express from 'express';
+import express, { Express } from 'express';
+import "reflect-metadata"
 
-const app = express();
+import {postgresqlDb} from './core/database/postgresql'
 
-app.get('/', (req, res) => {
-    res.send('Hello, World!');
-});
+import appV1Routes from './routes'
 
-app.listen(3000, () => {
-    console.log('Server running on http://localhost:3000');
-});
+const app: Express = express();
+
+app.use(express.json());
+
+app.use('/app/v1', appV1Routes);
+
+postgresqlDb
+    .initialize()
+    .then(() => {
+        console.log('Postgresql Databsae connected succesfuly');
+        app.listen(3000, () => {
+            console.log('Server running on http://localhost:3000');
+        });
+    })
+    .catch(err => console.log('An error ocurred when connecting to database', err));

@@ -3,9 +3,14 @@
         "target": "es6",
         "module": "commonjs",
         "outDir": "dist",
-        "strict": true
+        "strict": true,
+        "esModuleInterop":true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
     },
     "include": [
-        "src/*/"
-    ]
+        "src/*/",
+        "src/core/config.ts", 
+        "ormconfig.ts"    
+    ],
 }
