@@ -5,7 +5,7 @@ import { PasswordSignup } from '../../interfaces/password';
 import { User } from '../../interfaces/user';
 
 //INTERACTORS
-import { getUserProvisional, activateUserProvisional } from './../../interactors/users';
+import { getUserProvisional, activateUserProvisional } from '../../interactors/user';
 
 const router: Router = Router();
 

@@ -1,6 +1,8 @@
-import { hashPassword } from './../utils/hashPassword';
-import { PasswordSignup } from './../interfaces/password';
-import { getUserByPaswordProvisional, updateUserProvisional } from './../repositories/users';
+import { preventPasswordsNotEquals } from './../guards/password';
+import { preventUserNotFound, preventUserDuplicated, preventUserIsNotPending } from './../guards/user';
+import { hashPassword } from '../utils/hashPassword';
+import { PasswordSignup } from '../interfaces/password';
+import { getUserByPaswordProvisional, updateUserProvisional } from '../repositories/user';
 import { User } from '../interfaces/user'
 import { UserState } from '../constants/user';
 
@@ -8,38 +10,28 @@ export const getUserProvisional = async (passwordProvisional: string):Promise<Us
     let usersProvisional: User[] = []
     try{
         usersProvisional = await getUserByPaswordProvisional(passwordProvisional)
-        console.log(usersProvisional)
     } catch(err){
         console.log("An error ocurred retrieving the user with provisional password", err)
+        throw new Error("An error ocurred retrieving the user with provisional password")
     }
 
-    if(!usersProvisional.length){
-        throw new Error("User not found")
-    }
-    if(usersProvisional.length > 1) {
-        throw new Error("User is duplicate")
-    }
+    preventUserNotFound(usersProvisional)
+    preventUserDuplicated(usersProvisional)
 
     const userProvisional = usersProvisional[0]
-
-    if(userProvisional.state !== UserState.PENDING){
-        throw new Error("User is already activated")
-    }
+    preventUserIsNotPending(userProvisional)
 
     return userProvisional
 }
 
 export const activateUserProvisional = async (userId: number, passwordSignup: PasswordSignup):Promise<void> => {
-    if(passwordSignup.new !== passwordSignup.newRepeated){
-        console.log('Passwords are different')
-        throw new Error('Passwords are different')
-    }
+    preventPasswordsNotEquals(passwordSignup)
 
     let passwordHashed: string = ''
     try{
         passwordHashed = await hashPassword(passwordSignup.new)
     } catch(err){
-        console.log('An error ocurred when hasing the password')
+        console.log('An error ocurred when hashing the password')
         throw err
     }
 

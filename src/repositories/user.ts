@@ -1,8 +1,8 @@
 import { UpdateResult } from 'typeorm';
-import { UserState } from './../constants/user';
+import { UserState } from '../constants/user';
 import * as userEntities from '../entities/user';
 import { User } from '../interfaces/user'
-import { postgresqlDb } from './../core/database/postgresql';
+import { postgresqlDb } from '../core/database/postgresql';
 
 const userRepository = postgresqlDb.getRepository(userEntities.User)
 
