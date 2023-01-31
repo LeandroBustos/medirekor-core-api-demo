@@ -8,7 +8,6 @@ import { User } from '../../interfaces/user';
 import { getUserProvisional, activateUserProvisional } from '../../interactors/user';
 
 const router: Router = Router();
-
 router.post('/password', async (req: Request, res: Response) => {
     const password: PasswordSignup = {
         provisional: req.body.provisional_password,
