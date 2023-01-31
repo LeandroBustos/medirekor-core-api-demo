@@ -17,3 +17,10 @@ export interface User {
     state: UserState;
     type: UsertTypes;
 }
+
+export interface UserAccesToken {
+    id: number;
+    first_name: string;
+    last_name: string;
+    type: UsertTypes
+}
