@@ -5,10 +5,9 @@ import { PasswordSignup } from '../../interfaces/password';
 import { User } from '../../interfaces/user';
 
 //INTERACTORS
-import { getUserProvisional, activateUserProvisional } from './../../interactors/users';
+import { getUserProvisional, activateUserProvisional } from '../../interactors/user';
 
 const router: Router = Router();
-
 router.post('/password', async (req: Request, res: Response) => {
     const password: PasswordSignup = {
         provisional: req.body.provisional_password,

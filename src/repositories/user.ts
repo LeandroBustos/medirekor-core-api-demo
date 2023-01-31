@@ -1,8 +1,8 @@
 import { UpdateResult } from 'typeorm';
-import { UserState } from './../constants/user';
+import { UserState } from '../constants/user';
 import * as userEntities from '../entities/user';
 import { User } from '../interfaces/user'
-import { postgresqlDb } from './../core/database/postgresql';
+import { postgresqlDb } from '../core/database/postgresql';
 
 const userRepository = postgresqlDb.getRepository(userEntities.User)
 
@@ -20,6 +20,16 @@ export const getUserByPaswordProvisional = async (passwordProvisional: string):P
         where: {
             password: passwordProvisional
         }
+    })
+
+export const getUsersByEmail = async (email: string):Promise<User[]> => 
+    userRepository.find({
+        where: {
+            email: email
+        }
+    }).catch(err => {
+        console.log('database err', err)
+        throw err
     })
 
     //TODO MODULARIZAR PARA REUTILIZAR FUNCION
