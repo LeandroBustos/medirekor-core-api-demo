@@ -1,27 +1,38 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { mapUserAccessToken } from './../../mappers/user';
+import { createAccessToken } from './../../utils/accessToken';
+import { parseResponseError } from './../../parsers/response';
+import { getUserByEmail } from './../../interactors/user';
+import { Router, Request, Response } from 'express';
 
 //INTERFACES
-import { UserLogin } from '../../interfaces/user';
+import { User, UserLogin } from '../../interfaces/user';
+import { preventComparedPasswordsNotEquals } from '../../guards/password';
+import { ErrorStatusCode } from '../../interfaces/error';
 
 const router: Router = Router();
-
-router.use('/login', (req: Request, res: Response, next: NextFunction) => {
-    next();
-});
-
-router.post('/', (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
     const userLogin: UserLogin = {
         user: req.body.user,
         password: req.body.password
     }
 
     //TODO
-    //CHECKEAR QUE EXISTA EL USUARIO CON EL DATO USUARIO EN EL CAMPO MAIL Y QUE ESTE ACTIVO
-    //CHECKEAR QUE EL PASSWORD SEA EL MISMO QUE EL PASSWORD CODIFICADO
-    //PERMITIR LOGIN
-    //DEVOLVER ALGUN JWT CON EXPIRACION? COOKIES?
+    //CUANDO HAYA THROW DE ERRORES, DEVOLVERLOS EN UN RES.SEND, SINO LA APP ROMPE
+    let user: User | null = null
+    try {
+        user = await getUserByEmail(userLogin.user)
+    } catch(err){
+        return parseResponseError(res, <ErrorStatusCode>err)
+    }
 
-    return res.status(200).send(userLogin);
+    try {
+        await preventComparedPasswordsNotEquals(user.password, userLogin.password)
+    } catch(err){
+        return parseResponseError(res, <ErrorStatusCode>err)
+    }
+    
+    const accessToken = await createAccessToken(mapUserAccessToken(user))
+    return res.status(200).send({access_token: accessToken});
 })
 
 export default router
