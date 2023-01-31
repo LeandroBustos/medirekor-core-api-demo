@@ -1,8 +1,8 @@
 import { preventPasswordsNotEquals } from './../guards/password';
-import { preventUserNotFound, preventUserDuplicated, preventUserIsNotPending } from './../guards/user';
-import { hashPassword } from '../utils/hashPassword';
+import { preventUserNotFound, preventUserDuplicated, preventUserIsNotPending, preventUserIsNotActivated } from './../guards/user';
+import { hashPassword } from '../utils/password';
 import { PasswordSignup } from '../interfaces/password';
-import { getUserByPaswordProvisional, updateUserProvisional } from '../repositories/user';
+import { getUserByPaswordProvisional, getUsersByEmail, updateUserProvisional } from '../repositories/user';
 import { User } from '../interfaces/user'
 import { UserState } from '../constants/user';
 
@@ -22,6 +22,25 @@ export const getUserProvisional = async (passwordProvisional: string):Promise<Us
     preventUserIsNotPending(userProvisional)
 
     return userProvisional
+}
+
+export const getUserByEmail = async (email: string):Promise<User> => {
+    let users: User[] = [] 
+    try {
+        users = await getUsersByEmail(email)
+    } catch(err){
+        console.log('An error ocurred when getting users by email', err)
+        throw err
+    }
+
+
+    preventUserNotFound(users)
+    preventUserDuplicated(users)
+    
+    let user: User = users[0]
+    preventUserIsNotActivated(user)
+
+    return user
 }
 
 export const activateUserProvisional = async (userId: number, passwordSignup: PasswordSignup):Promise<void> => {
