@@ -10,5 +10,8 @@ export const config: Config = {
     },
     bcrypt: {
         salt_rounds: parseInt(process.env.SALT_ROUNDS as string) || 12 
+    },
+    jwt: {
+        secret: process.env.ACCESS_TOKEN_SECRET || 'asdasdsad'
     }
 }

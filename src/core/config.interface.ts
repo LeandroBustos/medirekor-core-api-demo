@@ -10,7 +10,12 @@ interface Bcrypt {
     salt_rounds: number
 }
 
+interface Jwt {
+    secret: string
+}
+
 export interface Config {
     postgres: Postgres
     bcrypt: Bcrypt
+    jwt: Jwt
 }
