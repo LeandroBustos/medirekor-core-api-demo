@@ -22,6 +22,16 @@ export const getUserByPaswordProvisional = async (passwordProvisional: string):P
         }
     })
 
+export const getUsersByEmail = async (email: string):Promise<User[]> => 
+    userRepository.find({
+        where: {
+            email: email
+        }
+    }).catch(err => {
+        console.log('database err', err)
+        throw err
+    })
+
     //TODO MODULARIZAR PARA REUTILIZAR FUNCION
 export const updateUserProvisional = async (userId: number, password: string, state: UserState):Promise<UpdateResult> => 
     userRepository.update({ id: userId }, { password, state, modified_at: new Date() })
