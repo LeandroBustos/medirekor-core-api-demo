@@ -1,10 +1,16 @@
+import { Organization } from './organization';
 import { UserState, UsertTypes } from './../constants/user';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, DeleteDateColumn, UpdateDateColumn, CreateDateColumn } from 'typeorm';
 
 @Entity({name: 'users', schema: 'core'})
 export class User {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
+
+  @Column({
+    type: 'character varying'
+  })
+  organization_id!: string;
 
   @Column({
     type: 'character varying'
@@ -27,18 +33,18 @@ export class User {
   password!: string;
 
   //NORMALIZAR A LA FECHA DEL ESTE DE ESTADOS UNIDOS
-  @Column({
+  @CreateDateColumn({
     type: 'timestamp with time zone'
   })
   created_at!: Date;
 
-  @Column({
+  @UpdateDateColumn({
     type: 'timestamp with time zone',
     nullable: true
   })
   modified_at!: Date | null;
 
-  @Column({
+  @DeleteDateColumn({
     type: 'timestamp with time zone',
     nullable: true
   })
@@ -52,8 +58,12 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: UsertTypes
+    enum: UsertTypes,
   })
   type!: UsertTypes;
+
+  @ManyToOne(() => Organization, (organization: Organization) => organization.users)
+  @JoinColumn({ name: 'organization_id' })
+  organization!: Organization
 }
 
