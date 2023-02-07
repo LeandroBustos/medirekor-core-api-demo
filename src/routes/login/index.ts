@@ -16,8 +16,6 @@ router.post('/', async (req: Request, res: Response) => {
         password: req.body.password
     }
 
-    //TODO
-    //CUANDO HAYA THROW DE ERRORES, DEVOLVERLOS EN UN RES.SEND, SINO LA APP ROMPE
     let user: User | null = null
     try {
         user = await getUserByEmail(userLogin.user)

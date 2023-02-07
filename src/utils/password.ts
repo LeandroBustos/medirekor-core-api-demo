@@ -1,5 +1,11 @@
 import { config } from '../core/config';
+
 import bcrypt from 'bcrypt';
+import * as nanoid from 'nanoid'
+
+import { upperCaseAlphanumericEnglish } from './../constants/stringPatterns';
+
+const nanoidCustom = nanoid.customAlphabet(upperCaseAlphanumericEnglish, 6)
 
 export const hashPassword = async (password: string):Promise<string> => {
     try {
@@ -18,3 +24,5 @@ export const comparePasswords = async (password: string, hashedPassword: string)
         throw err
     }
 }
+
+export const createPasswordProvisional = ():string => nanoidCustom()
