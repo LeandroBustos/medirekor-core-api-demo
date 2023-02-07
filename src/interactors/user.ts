@@ -1,8 +1,9 @@
+import { UserCreationSerialize, UserUpdate } from './../interfaces/user';
 import { preventPasswordsNotEquals } from './../guards/password';
-import { preventUserNotFound, preventUserDuplicated, preventUserIsNotPending, preventUserIsNotActivated } from './../guards/user';
+import { preventUsersNotFound, preventUserDuplicated, preventUserIsNotPending, preventUserIsNotActivated, preventUserNotFound } from './../guards/user';
 import { hashPassword } from '../utils/password';
 import { PasswordSignup } from '../interfaces/password';
-import { getUserByPaswordProvisional, getUsersByEmail, updateUserProvisional } from '../repositories/user';
+import { getUserById, getUserByIdAndType, getUserByPaswordProvisional, getUsersByEmail, insertUser, softDeleteUser, updateUser, updateUserProvisional } from '../repositories/user';
 import { User } from '../interfaces/user'
 import { UserState } from '../constants/user';
 
@@ -15,7 +16,7 @@ export const getUserProvisional = async (passwordProvisional: string):Promise<Us
         throw new Error("An error ocurred retrieving the user with provisional password")
     }
 
-    preventUserNotFound(usersProvisional)
+    preventUsersNotFound(usersProvisional)
     preventUserDuplicated(usersProvisional)
 
     const userProvisional = usersProvisional[0]
@@ -24,7 +25,7 @@ export const getUserProvisional = async (passwordProvisional: string):Promise<Us
     return userProvisional
 }
 
-export const getUserByEmail = async (email: string):Promise<User> => {
+export const getUserByEmail = async (email: User['email']):Promise<User> => {
     let users: User[] = [] 
     try {
         users = await getUsersByEmail(email)
@@ -34,7 +35,7 @@ export const getUserByEmail = async (email: string):Promise<User> => {
     }
 
 
-    preventUserNotFound(users)
+    preventUsersNotFound(users)
     preventUserDuplicated(users)
     
     let user: User = users[0]
@@ -43,14 +44,24 @@ export const getUserByEmail = async (email: string):Promise<User> => {
     return user
 }
 
-export const activateUserProvisional = async (userId: number, passwordSignup: PasswordSignup):Promise<void> => {
+export const isUserSameType = async (userId: User['id'], userType: User['type']): Promise<boolean> => {
+    try {
+        const user = await getUserByIdAndType(userId, userType)
+        return !!user
+    } catch (err) {
+        console.log('An error ocurred when getting user by id and type', err)
+        throw err
+    }
+}
+
+export const activateUserProvisional = async (userId: User['id'], passwordSignup: PasswordSignup):Promise<void> => {
     preventPasswordsNotEquals(passwordSignup)
 
     let passwordHashed: string = ''
     try{
         passwordHashed = await hashPassword(passwordSignup.new)
     } catch(err){
-        console.log('An error ocurred when hashing the password')
+        console.log('An error ocurred when hashing the password', err)
         throw err
     }
 
@@ -58,6 +69,63 @@ export const activateUserProvisional = async (userId: number, passwordSignup: Pa
         await updateUserProvisional(userId, passwordHashed, UserState.ACTIVATED)
     } catch(err){
         console.log('An error ocurred when updating user provisional', err)
+        throw err
+    }
+}
+
+export const modifyUser = async (userId: User['id'], user: UserUpdate):Promise<void> => {
+    let users: User[] = []
+    try {
+        users = await getUserById(userId)
+    } catch(err) {
+        console.log('An error ocurred when getting users by id', err)
+        throw err
+    }
+
+    preventUsersNotFound(users)
+
+    try {
+        await updateUser(userId, user)
+    } catch(err) {
+        console.log("An error ocurred when updating user", err)
+        throw err
+    }
+}
+
+export const createUser = async (user: UserCreationSerialize):Promise<void> => {
+    let users: User[] = []
+    try {
+        users = await getUsersByEmail(user.email)
+    } catch(err) {
+        console.log('An error ocurred when getting users by email', err)
+        throw err
+    }
+
+    preventUserDuplicated(users)
+
+    try {
+        await insertUser(user)
+    } catch(err) {
+        console.log('An error ocurred when inserting user', err)
+        throw err
+    }
+}
+
+export const deleteUser = async (userId: User['id']):Promise<void> => {
+    let users: User[] = []
+    try {
+        users = await getUserById(userId)
+    } catch(err) {
+        console.log('An error ocurred when getting users by id', err)
+        throw err
+    }
+
+    preventUsersNotFound(users)
+
+    try {
+        await softDeleteUser(userId)
+    } catch(err) {
+        console.log('An error ocurred when deleting user', err)
         throw err
     }
 }
