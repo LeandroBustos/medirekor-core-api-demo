@@ -1,3 +1,4 @@
+//TODO CAMBIAR ACTIVATED -> ACTIVE
 export enum UserState {
     ACTIVATED = 'ACTIVATED',
     DELETED = 'DELETED',
@@ -6,7 +7,7 @@ export enum UserState {
 }
 
 export enum UsertTypes {
-    CLINICIAR = 'CLINICIAN',
+    CLINICIAN = 'CLINICIAN',
     SYSADMIN = 'SYSADMIN',
     MANAGER = 'MANAGER'
 }
