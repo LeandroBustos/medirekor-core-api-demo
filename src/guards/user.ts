@@ -4,10 +4,16 @@ import { User } from "../interfaces/user";
 
 const isSameState = (userState: UserState, stateToCompare: UserState) => userState === stateToCompare
 
-export const preventUserNotFound = (users: User[]): void => {
+export const preventUsersNotFound = (users: User[]): void => {
     if(!users.length) {
         throw userNotFoundError
     } 
+}
+
+export const preventUserNotFound = (user: User | null): void => {
+    if(!user){
+        throw userNotFoundError
+    }
 }
 
 export const preventUserDuplicated = (users: User[]): void => {
