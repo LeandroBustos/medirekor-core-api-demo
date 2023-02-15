@@ -9,6 +9,7 @@ const ormconfig: DataSourceOptions = {
     "password": config.postgres.password,
     "database": config.postgres.database,
     "synchronize": false,
+    // "cache": false,
     "logging": true,
     "entities": [__dirname + "/src/entities/*.{js,ts}"],
     "migrations": ["src/migration/*.ts"],
