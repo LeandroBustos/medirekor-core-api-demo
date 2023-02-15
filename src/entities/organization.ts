@@ -1,5 +1,6 @@
+import { Setting } from './setting';
 import { User } from './user';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToMany, JoinTable } from 'typeorm';
 
 @Entity({name: 'organizations', schema: 'core'})
 export class Organization {
@@ -61,5 +62,18 @@ export class Organization {
 
     @OneToMany(() => User, (user: User) => user.organization) 
     users!: User[]
+
+    @ManyToMany(() => Setting, (setting: Setting) => setting.organizations) 
+    @JoinTable({name: 'organizations_to_settings', 
+        joinColumn: {
+            name: 'organization_id',
+            referencedColumnName: 'id'
+        },
+        inverseJoinColumn: {
+            name: 'setting_id',
+            referencedColumnName: 'id'
+        }
+    })
+    settings!: Setting[]
 }
 

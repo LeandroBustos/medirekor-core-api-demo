@@ -1,6 +1,7 @@
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, ManyToMany, DeleteDateColumn, UpdateDateColumn, CreateDateColumn, JoinTable } from 'typeorm';
 import { Organization } from './organization';
-import { UserState, UsertTypes } from './../constants/user';
-import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, DeleteDateColumn, UpdateDateColumn, CreateDateColumn } from 'typeorm';
+import { UserState, UserTypes } from './../constants/user';
+import { Setting } from './setting';
 
 @Entity({name: 'users', schema: 'core'})
 export class User {
@@ -58,12 +59,25 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: UsertTypes,
+    enum: UserTypes,
   })
-  type!: UsertTypes;
+  type!: UserTypes;
 
   @ManyToOne(() => Organization, (organization: Organization) => organization.users)
   @JoinColumn({ name: 'organization_id' })
   organization!: Organization
+
+  @ManyToMany(() => Setting, (setting: Setting) => setting.users)
+  @JoinTable({name: 'organizations_to_settings', 
+  joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id'
+  },
+  inverseJoinColumn: {
+      name: 'setting_id',
+      referencedColumnName: 'id'
+  }
+})
+  settings!: Setting[]
 }
 
