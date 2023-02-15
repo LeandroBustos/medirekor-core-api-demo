@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { UsertTypes } from "../constants/user";
+import { UserTypes } from "../constants/user";
 import { isUserSameType } from "../interactors/user";
 import { RequestAccessToken } from '../interfaces/express/request';
 
@@ -21,7 +21,7 @@ export const getUserDataFromAccessToken = async (req: Request, res: Response, ne
     }
 }
 
-export const checkUserAccess = (userType: UsertTypes) => async (req: Request, res: Response, next: NextFunction) => {
+export const checkUserAccess = (userType: UserTypes) => async (req: Request, res: Response, next: NextFunction) => {
     const current_user = (req as RequestAccessToken).current_user;
     try{
         if(await isUserSameType(current_user.id, userType)){
