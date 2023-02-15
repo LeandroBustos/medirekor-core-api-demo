@@ -1,5 +1,6 @@
 import { ErrorStatusCode } from '../interfaces/error';
 import { InternalCodes, StatusCodes } from './codes';
+import { SettingGroupTypes } from './setting';
 import { UserState } from './user';
 
 const buildError = (msg: string, internalCode: InternalCodes, statusCode: StatusCodes): ErrorStatusCode => {
@@ -15,3 +16,8 @@ export const userDuplicatedError: ErrorStatusCode = buildError('User is duplicat
 export const userIsNotPendingError: ErrorStatusCode = buildError(`User is not ${UserState.PENDING}`, InternalCodes.USER_IS_NOT_PENDING, StatusCodes.INTERNAL_SERVER_ERROR)
 export const userIsNotActivated: ErrorStatusCode = buildError(`User is not ${UserState.ACTIVATED}`, InternalCodes.USER_IS_NOT_ACTIVATED, StatusCodes.INTERNAL_SERVER_ERROR)
 export const passwordsNotEquals: ErrorStatusCode = buildError('Passwords are different.', InternalCodes.PASSWORDS_NOT_EQUALS, StatusCodes.UNAUTHORIZED)
+export const settingNotFoundError: ErrorStatusCode = buildError('Setting not found', InternalCodes.SETTING_NOT_FOUND, StatusCodes.NOT_FOUND)
+export const organizationToSettingsWrongTypeUser: ErrorStatusCode = buildError(`Type cannot be ${SettingGroupTypes.USER} when user id is null`, InternalCodes.ORGANIZATION_TO_SETTING_WRONG_TYPE, StatusCodes.BAD_INPUT)
+export const organizationToSettingsWrongTypeOrganization: ErrorStatusCode = buildError(`Type cannot be ${SettingGroupTypes.ORGANIZATION} when user id is not null`, InternalCodes.ORGANIZATION_TO_SETTING_WRONG_TYPE, StatusCodes.BAD_INPUT)
+export const organizationNotFoundError: ErrorStatusCode = buildError('Organization not found', InternalCodes.ORGANIZATION_NOT_FOUND, StatusCodes.NOT_FOUND)
+export const organizationSettingsNotFoundError: ErrorStatusCode = buildError('Organization settings not found', InternalCodes.ORGANIZATION_TO_SETTING_NOT_FOUND, StatusCodes.NOT_FOUND)
