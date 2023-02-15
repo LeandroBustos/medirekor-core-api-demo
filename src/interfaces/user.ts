@@ -1,4 +1,6 @@
-import { UserState, UsertTypes } from './../constants/user';
+import { UserState, UserTypes } from './../constants/user';
+
+import { Setting, SettingExtended } from './setting';
 
 export interface User {
     id: string;
@@ -11,7 +13,15 @@ export interface User {
     modified_at: Date | null;
     deleted_at: Date | null;
     state: UserState;
-    type: UsertTypes;
+    type: UserTypes;
+}
+
+export interface UserWithSettings extends User {
+    settings: Setting[]
+}
+
+export interface UserWithSettingsExtended extends User {
+    settings: SettingExtended[]
 }
 
 export interface UserLogin {
@@ -30,7 +40,7 @@ export interface UserCreation {
     first_name: User['first_name'];
     last_name: User['last_name'];
     email: User['email'];
-    type: UsertTypes;
+    type: UserTypes;
 }
 
 export interface UserCreationSerialize extends UserCreation {
