@@ -6,8 +6,19 @@ import { postgresqlDb } from '../core/database/postgresql';
 
 const userRepository = postgresqlDb.getRepository(userEntities.User)
 
-export const getUserById = async (userId: User['id']):Promise<User[]> => 
+//TODO EXCLUIR PASSWORD DE TODAS LAS FUNCIONES QUE NO LA UTILICEN
+export const getUsersById = async (userId: User['id']):Promise<User[]> => 
     userRepository.find({
+        where: {
+            id: userId,
+        }
+    }).catch(err => {
+        console.log('database err', err)
+        throw err
+    })
+
+export const getUserById = async (userId: User['id']):Promise<User | null> => 
+    userRepository.findOne({
         where: {
             id: userId,
         }
@@ -19,6 +30,12 @@ export const getUserById = async (userId: User['id']):Promise<User[]> =>
 export const getUserByIdAndType = (userId: User['id'], userType: User['type']):Promise<User | null> =>
     userRepository.findOneBy({id: userId, type: userType})
 
+export const getUsersByOrganizationId = (organizationId: User['organization_id']):Promise<User[]> =>
+    userRepository.findBy({ organization_id: organizationId })
+    .catch(err => {
+        console.log('database err', err)
+        throw err
+    })
 
 export const getUserByPaswordProvisional = async (passwordProvisional: string):Promise<User[]> =>
     userRepository.find({
@@ -37,7 +54,6 @@ export const getUsersByEmail = async (email: User['email']):Promise<User[]> =>
         throw err
     })
 
-    //TODO MODULARIZAR PARA REUTILIZAR FUNCION
 const updateUserBase = async (userId: User['id'], updateParams: Partial<User>) => 
     userRepository.update({ id: userId }, updateParams)
 
