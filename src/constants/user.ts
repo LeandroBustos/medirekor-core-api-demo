@@ -6,8 +6,14 @@ export enum UserState {
     PENDING = 'PENDING'
 }
 
-export enum UsertTypes {
+export enum UserTypes {
     CLINICIAN = 'CLINICIAN',
     SYSADMIN = 'SYSADMIN',
     MANAGER = 'MANAGER'
+}
+
+export const UserRankMap = {
+    SYSADMIN: [UserTypes.SYSADMIN, UserTypes.MANAGER, UserTypes.CLINICIAN],
+    MANAGER: [UserTypes.MANAGER, UserTypes.CLINICIAN],
+    CLINICIAN: [UserTypes.CLINICIAN]
 }
