@@ -7,7 +7,7 @@ import { Router, Request, Response } from 'express';
 //INTERFACES
 import { User, UserLogin } from '../../interfaces/user';
 import { preventComparedPasswordsNotEquals } from '../../guards/password';
-import { ErrorStatusCode } from '../../interfaces/error';
+import { RoutesErrors } from '../../constants/codes';
 
 const router: Router = Router();
 router.post('/', async (req: Request, res: Response) => {
@@ -20,13 +20,13 @@ router.post('/', async (req: Request, res: Response) => {
     try {
         user = await getUserByEmail(userLogin.user)
     } catch(err){
-        return parseResponseError(res, <ErrorStatusCode>err)
+        return parseResponseError(res, err, RoutesErrors.LOGIN_ERROR, {msg: 'An error occurred when getting user'})
     }
 
     try {
         await preventComparedPasswordsNotEquals(user.password, userLogin.password)
     } catch(err){
-        return parseResponseError(res, <ErrorStatusCode>err)
+        return parseResponseError(res, err, RoutesErrors.LOGIN_ERROR, {msg: 'An error occurred with email and/or password'})
     }
     
     const accessToken = await createAccessToken(mapUserAccessToken(user))

@@ -1,6 +1,6 @@
 import { isSettingCandidateToUser } from './../../interactors/setting';
 import { preventOrganizationToSettingWrongType } from './../../guards/organization_to_setting';
-import { InternalCodes } from './../../constants/codes';
+import { InternalCodes, RoutesErrors } from './../../constants/codes';
 import { addOrganizationToSetting, deleteOrganizationToSetting, isOrganizationToSettingExists, updateOrganizationToSettingState } from './../../interactors/organization_to_setting';
 import { Router, Request, Response } from 'express';
 
@@ -10,6 +10,7 @@ import { RequestAccessToken } from '../../interfaces/express/request';
 import { User } from './../../interfaces/user';
 import { StatusCodes } from '../../constants/codes';
 import { SettingGroupTypes } from '../../constants/setting';
+import { parseResponseError } from '../../parsers/response';
 
 const router: Router = Router();
 
@@ -19,10 +20,7 @@ router.get('/user', async (req: Request, res: Response) => {
     try {
         user = await getUser(current_user.id)
     } catch(err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when getting user',
-            code: 'GET_USERS_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.GET_USERS_SETTINGS_ERROR, {msg: 'An error occurred when getting user'})
     }
 
     //TODO GET SETTINGS FROM ORGANIZATION THAT MATCH USER GROUP OR DO NOT SURPASS RANK (SYSADMIN(SYSADMIN, MANAGER, CLINICIA), MANAGER(MANAGER, CLINICIAN), CLINICIAN(CLINICIAN))
@@ -30,11 +28,7 @@ router.get('/user', async (req: Request, res: Response) => {
         const usersSettings = await getUsersSettings(user.organization_id)
         return res.status(StatusCodes.OK).send(usersSettings)
     } catch (err) {
-        console.log(err)
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when getting user settings',
-            code: 'GET_USERS_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.GET_USERS_SETTINGS_ERROR, {msg: 'An error occurred when getting user'})
     }
 });
 
@@ -46,10 +40,7 @@ router.get('/user/:id', async (req: Request, res: Response) => {
     try {
         user = await getUser(current_user.id)
     } catch(err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when getting user',
-            code: 'GET_USER_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.GET_USERS_SETTINGS_BY_ID_ERROR, {msg: 'An error occurred when getting user'})
     }
 
     //TODO GET SETTINGS FROM ORGANIZATION THAT MATCH USER GROUP OR DO NOT SURPASS RANK (SYSADMIN(SYSADMIN, MANAGER, CLINICIA), MANAGER(MANAGER, CLINICIAN), CLINICIAN(CLINICIAN))
@@ -57,11 +48,7 @@ router.get('/user/:id', async (req: Request, res: Response) => {
         const userSettings = await getUserSettings(user.organization_id, userId)
         return res.status(StatusCodes.OK).send(userSettings)
     } catch (err) {
-        console.log(err)
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when getting user settings',
-            code: 'GET_USER_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.GET_USERS_SETTINGS_BY_ID_ERROR, {msg: 'An error occurred when getting user'})
     }
 });
 
@@ -71,20 +58,14 @@ router.get('/organization', async (req: Request, res: Response) => {
     try {
         user = await getUser(current_user.id)
     } catch(err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when getting user',
-            code: 'GET_ORGANIZATION_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.GET_ORGANIZATION_SETTINGS_ERROR, {msg: 'An error occurred when getting user'})
     }
 
     try {
         const organizationSettings = await getOrganizationSettings(user.organization_id)
         res.status(StatusCodes.OK).send(organizationSettings)
     } catch(err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when getting organization settings',
-            code: 'GET_ORGANIZATION_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.GET_ORGANIZATION_SETTINGS_ERROR, {msg: 'An error occurred when getting organization settings'})
     }
 
 
@@ -96,10 +77,7 @@ router.post('/', async (req: Request, res: Response) => {
     try {
         preventOrganizationToSettingWrongType(user_id, type)
     } catch(err) {
-        return res.status(StatusCodes.UNPROCESSABLE_ENTITY).send({
-            message: 'Type cant be USER if user_id is null and cant be ORGANIZATION if user_id is not null',
-            code: 'ADD_USER_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.ADD_USER_SETTINGS_ERROR, {msg: 'Type cant be USER if user_id is null and cant be ORGANIZATION if user_id is not null'})
     }
     if(user_id){
         try {
@@ -111,10 +89,7 @@ router.post('/', async (req: Request, res: Response) => {
                 })
             }
         } catch(err) {
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                message: 'An error ocurred when checking if setting can be assigned to user',
-                code: 'ADD_USER_SETTINGS_ERROR'
-            })
+            return parseResponseError(res, err, RoutesErrors.ADD_USER_SETTINGS_ERROR, {msg: 'An error ocurred when checking if setting can be assigned to user'})
         }
     }
     
@@ -132,10 +107,7 @@ router.post('/', async (req: Request, res: Response) => {
             })
         }
     } catch(err){
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when checking if setting already exists in organization or user',
-            code: 'ADD_USER_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.ADD_USER_SETTINGS_ERROR, {msg: 'An error occurred when checking if setting already exists in organization or user'})
     }
 
     try {
@@ -147,10 +119,7 @@ router.post('/', async (req: Request, res: Response) => {
         )
         return res.status(201).send()
     } catch(err) {
-        return res.status(500).send({
-            message: 'An error occurred when adding user settings',
-            code: 'ADD_USER_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.ADD_USER_SETTINGS_ERROR, {msg: 'An error occurred when adding user settings'})
     }
 });
 
@@ -162,20 +131,14 @@ router.put('/user/:id', async (req: Request, res: Response) => {
     try {
         user = await getUser(userId)
     } catch(err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when getting user',
-            code: 'UPDATE_USER_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.UPDATE_USER_SETTINGS_BY_ID_ERROR, {msg: 'An error occurred when getting user'})
     }
 
     try {
         await updateOrganizationToSettingState(setting_id, userId, SettingGroupTypes.USER, state)
         return res.status(StatusCodes.OK).send()
     } catch(err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when updating user setting',
-            code: 'UPDATE_USER_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.UPDATE_USER_SETTINGS_BY_ID_ERROR, {msg: 'An error occurred when updating user setting'})
     }
 })
 
@@ -187,21 +150,15 @@ router.put('/organization', async (req: Request, res: Response) => {
     try {
         user = await getUser(current_user.id)
     } catch(err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when getting user',
-            code: 'UPDATE_ORGANIZATION_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.UPDATE_ORGANIZATION_SETTINGS_ERROR, {msg: 'An error occurred when getting user'})
     }
 
     try {
-        //TODO ANALIZAR COMO INCLUIR UNA RELACION EN LAS SEARCH OPTIONS DEL UPDATE O USAR QUERY BUILDER
+        //TODO ANALIZAR COMO INCLUIR UNA RELACION EN LAS SEARCH OPTIONS DEL UPDATE O USAR QUERY BUILDER PARA APAGAR O PRENDER LOS SETTINGS SEGUN EL GRUPO DE SETTING (CLINICIAR, SYSADMIN, MANAGER)
         await updateOrganizationToSettingState(null, user.organization_id, SettingGroupTypes.ORGANIZATION, state)
         return res.status(StatusCodes.OK).send()
     } catch(err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when updating user setting',
-            code: 'UPDATE_ORGANIZATION_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.UPDATE_ORGANIZATION_SETTINGS_ERROR, {msg: 'An error occurred when updating user setting'})
     }
 })
 
@@ -212,20 +169,14 @@ router.delete('/user/:id', async (req: Request, res: Response) => {
     try {
         await getUser(userId)
     } catch(err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when getting user',
-            code: 'DELETE_USER_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.DELETE_USER_SETTINGS_BY_ID_ERROR, {msg: 'An error occurred when getting user'})
     }
 
     try {
         await deleteOrganizationToSetting(setting_id, userId, SettingGroupTypes.USER)
         return res.status(StatusCodes.OK).send()
     } catch(err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when deleting user setting',
-            code: 'DELETE_USER_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.DELETE_USER_SETTINGS_BY_ID_ERROR, {msg: 'An error occurred when deleting user setting'})
     }
 })
 
@@ -236,20 +187,14 @@ router.delete('/organization', async (req: Request, res: Response) => {
     try {
         user = await getUser(current_user.id)
     } catch(err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when getting user',
-            code: 'DELETE_ORGANIZATION_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.DELETE_ORGANIZATION_SETTINGS_ERROR, {msg: 'An error occurred when getting user'})
     }
 
     try {
         await deleteOrganizationToSetting(null, user.organization_id, SettingGroupTypes.ORGANIZATION)
         return res.status(StatusCodes.OK).send()
     } catch(err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-            message: 'An error occurred when deleting user setting',
-            code: 'DELETE_ORGANIZATION_SETTINGS_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.DELETE_ORGANIZATION_SETTINGS_ERROR, {msg: 'An error occurred when deleting user setting'})
     }
 })
 export default router

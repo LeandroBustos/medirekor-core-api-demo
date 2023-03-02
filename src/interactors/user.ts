@@ -1,3 +1,4 @@
+import logger from './../core/logger';
 import { Setting, SettingExtended } from './../interfaces/setting';
 import { OrganizationToSetting } from './../interfaces/organization_to_setting';
 import { UserCreationSerialize, UserUpdate, UserWithSettingsExtended } from './../interfaces/user';
@@ -109,7 +110,7 @@ export const getUser = async (userId: User['id']):Promise<User> => {
         preventUserNotFound(user)
         return user as User
     } catch(err) {
-        console.log('An error ocurred when gettin user by id', err)
+        logger.error('An error ocurred when getting user by id', err)
         throw err
     }
 }
