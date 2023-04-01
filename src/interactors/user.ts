@@ -12,6 +12,7 @@ import { UserState } from '../constants/user';
 import { getOrganizationsToSettingsByOrganizationOrUserId, getOrganizationsToSettingsByOrganizationId } from '../repositories/organization_to_setting';
 import { preventOrganizationToSettingsNotFound } from '../guards/organization_to_setting';
 import { SettingStates } from '../constants/setting';
+import { logMessages } from '../constants/strings';
 
 const getUserSettingsHashMap = (organizationToSettings: OrganizationToSetting[]):Record<User['id'], SettingExtended[]> => {
     let userSettings: Record<User['id'], SettingExtended[]> = {}
@@ -229,7 +230,7 @@ export const createUser = async (user: UserCreationSerialize):Promise<void> => {
     try {
         await insertUser(user)
     } catch(err) {
-        console.log('An error ocurred when inserting user', err)
+        logger.error(logMessages.USER_ERROR_WHEN_INSERTING_MSG, err)
         throw err
     }
 }

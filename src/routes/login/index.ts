@@ -30,7 +30,12 @@ router.post('/', async (req: Request, res: Response) => {
     }
     
     const accessToken = await createAccessToken(mapUserAccessToken(user))
-    return res.status(200).send({access_token: accessToken});
+    return res.status(200).send({
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        access_token: accessToken
+    });
 })
 
 export default router
