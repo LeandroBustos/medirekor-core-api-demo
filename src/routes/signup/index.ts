@@ -1,5 +1,8 @@
 import { Router, Request, Response } from 'express';
 
+import { parseResponseError } from '../../parsers/response';
+import { RoutesErrors } from '../../constants/codes';
+
 //INTERFACES
 import { PasswordSignup } from '../../interfaces/password';
 import { User } from '../../interfaces/user';
@@ -19,20 +22,13 @@ router.post('/password', async (req: Request, res: Response) => {
     try{
         userProvisional = await getUserProvisional(password.provisional)
     } catch(err){
-        return res.status(404).send({
-            message: 'An error occured when retrieving the user',
-            code: 'USER_NOT_FOUND'
-        })
+        return parseResponseError(res, err, RoutesErrors.SIGNUP_ERROR, {msg: 'An error occurred when getting user'})
     }
-
 
     try {
         await activateUserProvisional(userProvisional.id, password)
     } catch(err){
-        return res.status(500).send({
-            message: 'An error occurred when activating user',
-            code: 'ACTIVATE_USER_ERROR'
-        })
+        return parseResponseError(res, err, RoutesErrors.SIGNUP_ERROR, {msg: 'An error occurred when activating user'})
     }
 
     //TODO DEFINIR QUE ENVIAR COMO RESPUESTA, ALGO NADA?

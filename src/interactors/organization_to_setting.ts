@@ -1,16 +1,18 @@
+import { logMessages } from './../constants/strings';
 import { Organization } from './../entities/organization';
 import { v4 as uuidv4 } from 'uuid'
 import { SettingGroupTypes, SettingStates } from '../constants/setting';
 import { User } from '../interfaces/user';
 import { Setting } from './../interfaces/setting';
 import { insertOrganizationToSettings, getOrganizationToSettingsByAll, updateOrganizationToSetting, softDeleteOrganizationToSetting } from './../repositories/organization_to_setting';
+import logger from '../core/logger';
 
 export const addOrganizationToSetting = async (settingId: Setting['id'], organizationId: string, userId: User['id'], type: SettingGroupTypes):Promise<void> => {
     const id: string = uuidv4()
     try {
         await insertOrganizationToSettings({id, setting_id: settingId, organization_id: organizationId, user_id: userId, type})
     } catch(err) {
-        console.log('An error ocurred when inserting user', err)
+        logger.error(logMessages.USER_ERROR_WHEN_INSERTING_MSG, err)
         throw err
     }
 }
@@ -20,7 +22,7 @@ export const isOrganizationToSettingExists = async (settingId: Setting['id'], or
         const organizationToSettings = await getOrganizationToSettingsByAll(settingId, organizationId, userId, type)
         return !!organizationToSettings
     } catch(err) {
-        console.log('An error ocurred when gettin organizations to settings by all', err)
+        logger.error(logMessages.ORGANIZATION_TO_SETTINGS_ERROR_WHEN_GETTING_ALL_MSG, err)
         throw err
     }
 }
@@ -29,7 +31,7 @@ export const updateOrganizationToSettingState = async (settingId: Setting['id'] 
     try {
         await updateOrganizationToSetting(settingId, relation_id, type, state)
     } catch(err) {
-        console.log('An error ocurred when updating organization to setting state', err)
+        console.log(logMessages.ORGANIZATION_TO_SETTINGS_ERROR_WHEN_UPDATING_MSG, err)
         throw err
     }
 }
