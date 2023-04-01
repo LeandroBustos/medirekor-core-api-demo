@@ -1,7 +1,7 @@
 import patientsDummy from './patients'
 
 const encounters: any = {
-    "leandro joan bustos": [
+    "Gabriel Torres": [
         patientsDummy[10],
         patientsDummy[9],
         patientsDummy[8],

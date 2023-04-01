@@ -1,5 +1,6 @@
 const patients: any = {
     "1": {
+        id: "1",
         name: "Roberto",
         last_name: "Garcia",
         birthday: "10/12/1986 - 36 years old",
@@ -60,6 +61,7 @@ const patients: any = {
         }
     },
     "2": {
+        id: "2",
         name: "Diego",
         last_name: "Lopez",
         birthday: "15/01/1970 - 53 years old",
@@ -124,6 +126,7 @@ const patients: any = {
         }
     },
     "3": {
+        id: "3",
         name: "Ricardo",
         last_name: "Veglia",
         birthday: "12/03/1972 - 51 years old",
@@ -176,6 +179,7 @@ const patients: any = {
         }
     },
     "4": {
+        id: "4",
         name: "Luis",
         last_name: "Santos",
         birthday: "11/07/1993 - 29 years old",
@@ -229,6 +233,7 @@ const patients: any = {
         }
     },
     "5": {
+        id: "5",
         name: "Sara",
         last_name: "Marquez",
         birthday: "21/08/1992 - 30 years old",
@@ -282,6 +287,7 @@ const patients: any = {
         }
     },
     "6": {
+        id: "6",
         name: "Luis",
         last_name: "Santos",
         birthday: "11/07/1993 - 29 years old",
@@ -335,6 +341,7 @@ const patients: any = {
         }
     },
     "7": {
+        id: "7",
         name: "Eric",
         last_name: "Gonzalez",
         birthday: "14/08/1990 - 32 years old",
@@ -389,6 +396,7 @@ const patients: any = {
         }
     },
     "8": {
+        id: "8",
         name: "Maria",
         last_name: "Ramirez",
         birthday: "27/03/1985 - 37 years old",
@@ -436,6 +444,7 @@ const patients: any = {
         }
     },
     "9": {
+        id: "9",
         name: "Juan",
         last_name: "Santos",
         birthday: "06/12/1978 - 44 years old",
@@ -476,6 +485,7 @@ const patients: any = {
         }
     },
     "10": {
+        id: "10",
         name: "Ana",
         last_name: "Rodriguez",
         birthday: "19/09/1995 - 27 years old",

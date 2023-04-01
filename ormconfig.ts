@@ -25,5 +25,6 @@ const ormconfig: DataSourceOptions = {
         }
     }
 }
+console.log(ormconfig)
 
 export default ormconfig
