@@ -29,12 +29,12 @@ INSERT INTO core.users (
     organization_id
 ) 
 VALUES(
-    'PENDING', 
+    'ACTIVATED', 
     'CLINICIAN',
-    'Gabriel', 
-    'Torres', 
-    'gabriel@medirekor.com', 
-    'testdemo', 
+    'Leandro', 
+    'Bustos', 
+    'leandro@medirekor.com', 
+    '$2a$12$6kyYpJIgUsq0pIdzjxL/sORMP1dTkmAc4d6LJhdR4kHBV67lq3bn2', 
     NOW(), 
     null, 
     null,
