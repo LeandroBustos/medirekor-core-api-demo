@@ -36,6 +36,11 @@ Start the docker containers
   npm run services:start
 ```
 
+## Demo Credentials
+**User:** leandro@medirekor.com
+
+**Password:** testdemo
+
 ## Tech Stack
 
 **Technologies:** NodeJS, Express, TypeScript, Postgres, Docker
